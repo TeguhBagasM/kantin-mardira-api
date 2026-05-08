@@ -15,12 +15,16 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 
 	userRepo := repository.NewUserRepository(db)
 	tokenRepo := repository.NewTokenRepository(db)
+	categoryRepo := repository.NewCategoryRepository(db)
 	authService := service.NewAuthService(userRepo, tokenRepo)
 	authHandler := handler.NewAuthHandler(authService)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
+	categoryService := service.NewCategoryService(categoryRepo)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
 	authMiddleware := middleware.AuthMiddleware(tokenRepo)
 
 	RegisterAuthRoutes(apiV1, authHandler, authMiddleware)
 	RegisterUserRoutes(apiV1, userHandler, authMiddleware)
+	RegisterCategoryRoutes(apiV1, categoryHandler, authMiddleware)
 }
