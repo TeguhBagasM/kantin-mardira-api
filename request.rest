@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:8080/api/v1
+@adminEmail = admin@kantin.com
+@adminPassword = admin123
+@cashierEmail = cashier@kantin.com
+@cashierPassword = cashier123
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjliMDQ5OGEtYmRlNC00YTEzLThkM2EtMjQzYWU0Njc3NTk5Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzMzMjM0LCJpYXQiOjE3NzgyNDY4MzQsImp0aSI6IjIzMzM1Y2VkLWU3YmMtNDhkNS1hMzcyLTM5OTYyNTQ2ZDZmNyJ9.pYQRSU8XLt8n1_i_ko4fUr1RXCF655WyilviNc-7nas
+@cashierToken = 
+@userId = b9b0498a-bde4-4a13-8d3a-243ae4677599
+
+### Login as Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+client.global.set("token", response.body.data.token);
+%}
+
+### Login as Cashier
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{cashierEmail}}",
+  "password": "{{cashierPassword}}"
+}
+
+> {%
+client.global.set("cashierToken", response.body.data.token);
+%}
+
+### Profile - Protected Route
+GET {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+
+### Profile - Unauthorized Example
+GET {{baseUrl}}/profile
+
+### Get All Users - Any Authenticated Role
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+
+### Get User By ID - Any Authenticated Role
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### Create User - Admin Only
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Manager Kantin",
+  "email": "manager@kantin.com",
+  "password": "manager123",
+  "role": "manager"
+}
+
+### Update User - Admin Only
+PUT {{baseUrl}}/users/01a8ad69-c56c-41a7-8266-0e528c4626d5
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cashier",
+  "email": "cashier@kantin.com",
+  "password": "cashier123",
+  "role": "cashier"
+}
+
+### Delete User - Admin Only
+DELETE {{baseUrl}}/users/21fb7cd5-31b7-4fcc-b145-aea5e0f1a975
+Authorization: Bearer {{token}}
+
+### Logout
+POST {{baseUrl}}/logout
+Authorization: Bearer {{token}}
+
+### Profile After Logout - Should Be Unauthorized
+GET {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+
+### Forbidden Example - Cashier Tries To Create User
+POST {{baseUrl}}/users
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "name": "Should Fail",
+  "email": "forbidden@kantin.com",
+  "password": "password123",
+  "role": "cashier"
+}
