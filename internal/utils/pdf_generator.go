@@ -35,7 +35,7 @@ func (g *PDFGenerator) header() {
 	g.pdf.SetFont("Arial", "B", 14)
 	g.pdf.CellFormat(0, 7, "KANTIN MARDIRA", "", 1, "L", false, 0, "")
 	g.pdf.SetFont("Arial", "", 10)
-	g.pdf.CellFormat(0, 5, "Jl. Contoh No. 123, Bandung", "", 1, "L", false, 0, "")
+	g.pdf.CellFormat(0, 5, "Jl. Soekarno-Hatta No. 211, Leuwipanjang.", "", 1, "L", false, 0, "")
 	g.pdf.Ln(2)
 	g.pdf.Line(15, 22, 195, 22)
 	g.pdf.Ln(6)

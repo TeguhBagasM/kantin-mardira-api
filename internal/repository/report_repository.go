@@ -6,6 +6,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type TransactionReportRow struct {
+	ID              string    `gorm:"column:id"`
+	TransactionCode string    `gorm:"column:transaction_code"`
+	PaymentMethod   string    `gorm:"column:payment_method"`
+	PaymentStatus   string    `gorm:"column:payment_status"`
+	TotalAmount     int       `gorm:"column:total_amount"`
+	PaidAmount      int       `gorm:"column:paid_amount"`
+	ChangeAmount    int       `gorm:"column:change_amount"`
+	TransactionTime time.Time `gorm:"column:transaction_time"`
+	CashierID       string    `gorm:"column:cashier_id"`
+	CashierName     string    `gorm:"column:cashier_name"`
+}
+
 type ReportAggregateRow struct {
 	TotalTransactions int64
 	TotalRevenue      int64
@@ -25,6 +38,7 @@ type ReportRepository interface {
 	MonthlyReport(month int, year int) (*ReportAggregateRow, error)
 	SummaryReport(startDate, endDate time.Time) (*ReportAggregateRow, error)
 	TopSellingMenus(limit int) ([]TopSellingMenuRow, error)
+	TransactionsBetween(startDate, endDate time.Time) ([]TransactionReportRow, error)
 }
 
 type reportRepository struct {
@@ -91,6 +105,31 @@ func (r *reportRepository) TopSellingMenus(limit int) ([]TopSellingMenuRow, erro
 		Group("menus.id, menus.name").
 		Order("total_quantity_sold DESC, total_revenue DESC").
 		Limit(limit).
+		Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+func (r *reportRepository) TransactionsBetween(startDate, endDate time.Time) ([]TransactionReportRow, error) {
+	var rows []TransactionReportRow
+	if err := r.db.Table("transactions").
+		Select(`
+			transactions.id,
+			transactions.transaction_code,
+			transactions.payment_method,
+			transactions.payment_status,
+			transactions.total_amount,
+			transactions.paid_amount,
+			transactions.change_amount,
+			transactions.transaction_time,
+			users.id AS cashier_id,
+			users.name AS cashier_name
+		`).
+		Joins("LEFT JOIN users ON users.id = transactions.cashier_id").
+		Where("transactions.payment_status = ? AND transactions.transaction_time >= ? AND transactions.transaction_time < ?", "paid", startDate, endDate).
+		Order("transactions.transaction_time DESC").
 		Scan(&rows).Error; err != nil {
 		return nil, err
 	}

@@ -287,6 +287,30 @@ Authorization: Bearer {{managerToken}}
 GET {{baseUrl}}/reports/daily?date=2026-05-09
 Authorization: Bearer {{cashierToken}}
 
+### Daily Report PDF - Manager
+GET {{baseUrl}}/reports/daily/pdf?date=2026-05-09
+Authorization: Bearer {{managerToken}}
+
+### Weekly Report PDF - Manager
+GET {{baseUrl}}/reports/weekly/pdf?start_date=2026-05-05&end_date=2026-05-12
+Authorization: Bearer {{managerToken}}
+
+### Monthly Report PDF - Manager
+GET {{baseUrl}}/reports/monthly/pdf?month=5&year=2026
+Authorization: Bearer {{managerToken}}
+
+### Invoice PDF - Cashier Own Transaction
+GET {{baseUrl}}/transactions/{{transactionId}}/invoice
+Authorization: Bearer {{cashierToken}}
+
+### Invoice PDF - Manager Can Access
+GET {{baseUrl}}/transactions/{{transactionId}}/invoice
+Authorization: Bearer {{managerToken}}
+
+### Forbidden Example - Cashier Tries To Open Other Invoice
+GET {{baseUrl}}/transactions/4b0e9d76-59fb-4215-8726-09ee71d2ac23/invoice
+Authorization: Bearer {{cashierToken}}
+
 ### Stock Validation Error - Quantity Too Large
 POST {{baseUrl}}/transactions
 Authorization: Bearer {{cashierToken}}

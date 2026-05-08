@@ -1,5 +1,7 @@
 package dto
 
+import "kantin-mardira-api/internal/entity"
+
 type DailyReportQuery struct {
 	Date string `form:"date" binding:"required"`
 }
@@ -58,4 +60,50 @@ type TopSellingMenuResponse struct {
 	MenuName          string `json:"menu_name"`
 	TotalQuantitySold int64  `json:"total_quantity_sold"`
 	TotalRevenue      int64  `json:"total_revenue"`
+}
+
+type ReportTransactionRow struct {
+	ID              string                      `json:"id"`
+	TransactionCode string                      `json:"transaction_code"`
+	Cashier         *CashierResponseMini        `json:"cashier,omitempty"`
+	PaymentMethod   string                      `json:"payment_method"`
+	PaymentStatus   string                      `json:"payment_status"`
+	TotalAmount     int                         `json:"total_amount"`
+	PaidAmount      int                         `json:"paid_amount"`
+	ChangeAmount    int                         `json:"change_amount"`
+	TransactionTime string                      `json:"transaction_time,omitempty"`
+	Items           []TransactionItemResponse   `json:"items,omitempty"`
+}
+
+type ReportPDFData struct {
+	Title             string
+	Period            string
+	GeneratedAt       string
+	SummaryTitle      string
+	SummaryLabels     map[string]string
+	SummaryValues     map[string]string
+	Transactions      []ReportTransactionRow
+	TopSellingMenus   []TopSellingMenuResponse
+	EmptyMessage      string
+	ShowTopSelling    bool
+	ShowTransactions  bool
+	DateLabel         string
+}
+
+type InvoicePDFData struct {
+	TransactionCode string
+	CashierName     string
+	TransactionDate string
+	PaymentMethod   string
+	PaymentStatus   string
+	Items           []TransactionItemResponse
+	TotalAmount     int
+	PaidAmount      int
+	ChangeAmount    int
+	GeneratedAt     string
+	Title           string
+	HeaderName      string
+	AddressLine     string
+	Note            string
+	Transaction     *entity.Transaction
 }
