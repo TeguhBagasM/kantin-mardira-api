@@ -3,9 +3,10 @@
 @adminPassword = admin123
 @cashierEmail = cashier@kantin.com
 @cashierPassword = cashier123
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjliMDQ5OGEtYmRlNC00YTEzLThkM2EtMjQzYWU0Njc3NTk5Iiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzMzMjM0LCJpYXQiOjE3NzgyNDY4MzQsImp0aSI6IjIzMzM1Y2VkLWU3YmMtNDhkNS1hMzcyLTM5OTYyNTQ2ZDZmNyJ9.pYQRSU8XLt8n1_i_ko4fUr1RXCF655WyilviNc-7nas
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2IwMTFjZTQtYWNlYy00MDU5LWFhMTYtNDk5MjI0MTE2YjUxIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzQ2NTA5LCJpYXQiOjE3NzgyNjAxMDksImp0aSI6ImEwMTVlMDg2LWRjMjgtNGVkOC05NzBjLWI2ZmYyYTE1OTdlYyJ9.MZUOu4X6zRkIVpD3ssrdjCeXThWj_ltNqffMAOai3yc
 @cashierToken = 
 @userId = b9b0498a-bde4-4a13-8d3a-243ae4677599
+@categoryId = c2ed6531-c233-4663-9087-875797057545
 
 ### Login as Admin
 POST {{baseUrl}}/auth/login
@@ -94,4 +95,51 @@ Content-Type: application/json
   "email": "forbidden@kantin.com",
   "password": "password123",
   "role": "cashier"
+}
+
+### Create Category - Admin Only
+POST {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cemilan"
+}
+
+> {%
+client.global.set("categoryId", response.body.data.id);
+%}
+
+### Get All Categories - Any Authenticated Role
+GET {{baseUrl}}/categories
+Authorization: Bearer {{token}}
+
+### Get Category By ID - Any Authenticated Role
+GET {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+
+### Update Category - Admin Only
+PUT {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Beverage"
+}
+
+### Delete Category - Admin Only
+DELETE {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+
+### Get Category After Delete - Should Not Found
+GET {{baseUrl}}/categories/{{categoryId}}
+Authorization: Bearer {{token}}
+
+### Forbidden Example - Cashier Tries To Create Category
+POST {{baseUrl}}/categories
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "name": "Snacks"
 }
