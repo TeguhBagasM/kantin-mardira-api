@@ -31,6 +31,8 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 	reportService := service.NewReportService(reportRepo)
 	reportHandler := handler.NewReportHandler(reportService)
+	pdfService := service.NewPDFService(reportService, transactionService)
+	pdfHandler := handler.NewPDFHandler(pdfService)
 	authMiddleware := middleware.AuthMiddleware(tokenRepo)
 
 	RegisterAuthRoutes(apiV1, authHandler, authMiddleware)
@@ -39,4 +41,5 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	RegisterMenuRoutes(apiV1, menuHandler, authMiddleware)
 	RegisterTransactionRoutes(apiV1, transactionHandler, authMiddleware)
 	RegisterReportRoutes(apiV1, reportHandler, authMiddleware)
+	RegisterPDFRoutes(apiV1, pdfHandler, authMiddleware)
 }
