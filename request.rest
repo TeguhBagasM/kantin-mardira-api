@@ -3,10 +3,16 @@
 @adminPassword = admin123
 @cashierEmail = cashier@kantin.com
 @cashierPassword = cashier123
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2IwMTFjZTQtYWNlYy00MDU5LWFhMTYtNDk5MjI0MTE2YjUxIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzQ2NTA5LCJpYXQiOjE3NzgyNjAxMDksImp0aSI6ImEwMTVlMDg2LWRjMjgtNGVkOC05NzBjLWI2ZmYyYTE1OTdlYyJ9.MZUOu4X6zRkIVpD3ssrdjCeXThWj_ltNqffMAOai3yc
-@cashierToken = 
+@managerEmail = manager@kantin.com
+@managerPassword = manager123
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2IwMTFjZTQtYWNlYy00MDU5LWFhMTYtNDk5MjI0MTE2YjUxIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzQ4ODk4LCJpYXQiOjE3NzgyNjI0OTgsImp0aSI6IjIwZjUwNTUxLWM4NjktNDU3Zi05NWNmLTliM2M3MzdlZjVlNiJ9.nJAscppnaOBT8PVRN96AEDoTj7vWlhne_VXLOukpQ3I
+@cashierToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTA3NmNhNmUtMmI2Ny00Yjg1LWIzYzMtMGMzNTg1MWQ1MzU3Iiwicm9sZSI6ImNhc2hpZXIiLCJleHAiOjE3NzgzNTAzNjcsImlhdCI6MTc3ODI2Mzk2NywianRpIjoiZjU2MGVkNzktYzFjZC00ODdkLWE0MmQtMmNlNTUzMGFjMzJiIn0.W0BhDPcvACh4EMzmp22m2NHXwU66YCeh7hvnxvLNG1M
+@managerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzU2YThmNTgtMWU1MS00MjZlLTg2ODQtMzE1NDAzMWRmM2M0Iiwicm9sZSI6Im1hbmFnZXIiLCJleHAiOjE3NzgzNDg5NTIsImlhdCI6MTc3ODI2MjU1MiwianRpIjoiNWNkZmMyYTItNjAzNS00OWFhLWJlMDYtMTEzZTdmMTE1MmIzIn0.SVZzAKaEHwrxS8V9Hxb-65RkeQNUOKIA9YjjGHMINRg
 @userId = b9b0498a-bde4-4a13-8d3a-243ae4677599
-@categoryId = c2ed6531-c233-4663-9087-875797057545
+@categoryId = 867beafe-e6ce-437e-82d7-5604eb811861
+
+@menuId = 37c1212e-a413-45d8-b465-119e9bad50f4
+@transactionId = 9753d120-0109-4132-a512-3ad16a0b5147
 
 ### Login as Admin
 POST {{baseUrl}}/auth/login
@@ -55,11 +61,24 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "Manager Kantin",
+  "name": "Teguh",
   "email": "manager@kantin.com",
   "password": "manager123",
   "role": "manager"
 }
+
+### Login as Manager
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{managerEmail}}",
+  "password": "{{managerPassword}}"
+}
+
+> {%
+client.global.set("managerToken", response.body.data.token);
+%}
 
 ### Update User - Admin Only
 PUT {{baseUrl}}/users/01a8ad69-c56c-41a7-8266-0e528c4626d5
@@ -143,3 +162,200 @@ Content-Type: application/json
 {
   "name": "Snacks"
 }
+
+### Create Menu - Admin Only
+POST {{baseUrl}}/menus
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "category_id": "{{categoryId}}",
+  "name": "Nasi Ayam Geprek",
+  "price": 11000,
+  "stock": 30,
+  "image_url": "https://example.com/nasi-ayam-geprek.jpg",
+  "is_available": true
+}
+
+> {%
+client.global.set("menuId", response.body.data.id);
+%}
+
+### Get All Menus - Any Authenticated Role
+GET {{baseUrl}}/menus
+Authorization: Bearer {{cashierToken}}
+
+### Get Menu By ID - Any Authenticated Role
+GET {{baseUrl}}/menus/{{menuId}}
+Authorization: Bearer {{token}}
+
+### Update Menu - Admin Only
+PUT {{baseUrl}}/menus/{{menuId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "category_id": "{{categoryId}}",
+  "name": "Indomie Rebus",
+  "price": 10000,
+  "stock": 100,
+  "image_url": "https://example.com/indomie-rebus.jpg",
+  "is_available": true
+}
+
+### Create Transaction - Cashier
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "payment_method": "cash",
+  "paid_amount": 50000,
+  "items": [
+    {
+      "menu_id": "{{menuId}}",
+      "quantity": 2
+    }
+  ]
+}
+
+> {%
+client.global.set("transactionId", response.body.data.id);
+%}
+
+### Get All Transactions - Admin or Manager
+GET {{baseUrl}}/transactions
+Authorization: Bearer {{managerToken}}
+
+### Get Transaction By ID - Admin or Manager
+GET {{baseUrl}}/transactions/{{transactionId}}
+Authorization: Bearer {{managerToken}}
+
+### Create Transaction - QRIS
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "payment_method": "qris",
+  "paid_amount": 0,
+  "items": [
+    {
+      "menu_id": "{{menuId}}",
+      "quantity": 1
+    }
+  ]
+}
+
+### Get All Transactions - Cashier Only Own Data
+GET {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+
+### Get All Transactions - Manager Sees All
+GET {{baseUrl}}/transactions
+Authorization: Bearer {{managerToken}}
+
+### Get Transaction By ID - Cashier Only Own Transaction
+GET {{baseUrl}}/transactions/{{transactionId}}
+Authorization: Bearer {{cashierToken}}
+
+### Get Transaction By ID - Manager
+GET {{baseUrl}}/transactions/{{transactionId}}
+Authorization: Bearer {{managerToken}}
+
+### Daily Report - Manager
+GET {{baseUrl}}/reports/daily?date=2026-05-09
+Authorization: Bearer {{managerToken}}
+
+### Weekly Report - Manager
+GET {{baseUrl}}/reports/weekly?start_date=2026-05-05&end_date=2026-05-12
+Authorization: Bearer {{managerToken}}
+
+### Monthly Report - Manager
+GET {{baseUrl}}/reports/monthly?month=5&year=2026
+Authorization: Bearer {{managerToken}}
+
+### Summary Report - Manager
+GET {{baseUrl}}/reports/summary?start_date=2026-05-01&end_date=2026-05-31
+Authorization: Bearer {{managerToken}}
+
+### Top Selling Report - Manager
+GET {{baseUrl}}/reports/top-selling?limit=10
+Authorization: Bearer {{managerToken}}
+
+### Forbidden Example - Cashier Tries To Access Reports
+GET {{baseUrl}}/reports/daily?date=2026-05-09
+Authorization: Bearer {{cashierToken}}
+
+### Stock Validation Error - Quantity Too Large
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "payment_method": "cash",
+  "paid_amount": 999999,
+  "items": [
+    {
+      "menu_id": "{{menuId}}",
+      "quantity": 9999
+    }
+  ]
+}
+
+### Invalid Payment Amount - Cash Less Than Total
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "payment_method": "cash",
+  "paid_amount": 1000,
+  "items": [
+    {
+      "menu_id": "{{menuId}}",
+      "quantity": 1
+    }
+  ]
+}
+
+### Rollback Scenario - One Item Invalid
+POST {{baseUrl}}/transactions
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "payment_method": "cash",
+  "paid_amount": 50000,
+  "items": [
+    {
+      "menu_id": "{{menuId}}",
+      "quantity": 1
+    },
+    {
+      "menu_id": "4b0e9d76-59fb-4215-8726-09ee71d2ac23",
+      "quantity": 2
+    }
+  ]
+}
+
+### Forbidden Example - Cashier Tries To Create Menu
+POST {{baseUrl}}/menus
+Authorization: Bearer {{cashierToken}}
+Content-Type: application/json
+
+{
+  "category_id": "{{categoryId}}",
+  "name": "Es Teh",
+  "price": 5000,
+  "stock": 10,
+  "image_url": "https://example.com/es-teh.jpg",
+  "is_available": true
+}
+
+### Delete Menu - Admin Only
+DELETE {{baseUrl}}/menus/{{menuId}}
+Authorization: Bearer {{token}}
+
+### Delete Transaction Test Data Not Needed
+### After transaction tests, you can delete menu if needed
