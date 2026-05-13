@@ -168,7 +168,11 @@ func (s *pdfService) InvoicePDF(userID, role, transactionID string) ([]byte, str
 		customerName = *transaction.CustomerName
 	}
 	generator.AddSubtitle(fmt.Sprintf("Customer: %s", customerName))
-	generator.AddSubtitle(fmt.Sprintf("Cashier: %s", transaction.Cashier.Name))
+	cashierName := "-"
+	if transaction.Cashier != nil && strings.TrimSpace(transaction.Cashier.Name) != "" {
+		cashierName = transaction.Cashier.Name
+	}
+	generator.AddSubtitle(fmt.Sprintf("Cashier: %s", cashierName))
 	generator.AddSubtitle(fmt.Sprintf("Date: %s", transaction.TransactionTime))
 	generator.AddSubtitle(fmt.Sprintf("Payment Method: %s", transaction.PaymentMethod))
 	generator.AddSubtitle(fmt.Sprintf("Payment Status: %s", transaction.PaymentStatus))
