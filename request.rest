@@ -209,6 +209,7 @@ Authorization: Bearer {{cashierToken}}
 Content-Type: application/json
 
 {
+  "customer_name": "Bagas",
   "payment_method": "cash",
   "paid_amount": 50000,
   "items": [
@@ -217,6 +218,13 @@ Content-Type: application/json
       "quantity": 2
     }
   ]
+}
+
+### Create Transaction Response Example
+
+{
+  "transaction_code": "TRX-20260509-001",
+  "customer_name": "Bagas"
 }
 
 > {%

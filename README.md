@@ -310,6 +310,31 @@ GET /menus
 POST /transactions
 ```
 
+Request body example:
+
+```json
+{
+  "customer_name": "Bagas",
+  "payment_method": "cash",
+  "paid_amount": 50000,
+  "items": [
+    {
+      "menu_id": "...",
+      "quantity": 2
+    }
+  ]
+}
+```
+
+Response example:
+
+```json
+{
+  "transaction_code": "TRX-20260509-001",
+  "customer_name": "Bagas"
+}
+```
+
 ### Get Transactions
 
 ```http

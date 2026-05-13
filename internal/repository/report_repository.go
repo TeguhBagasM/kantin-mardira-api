@@ -9,6 +9,7 @@ import (
 type TransactionReportRow struct {
 	ID              string    `gorm:"column:id"`
 	TransactionCode string    `gorm:"column:transaction_code"`
+	CustomerName    *string   `gorm:"column:customer_name"`
 	PaymentMethod   string    `gorm:"column:payment_method"`
 	PaymentStatus   string    `gorm:"column:payment_status"`
 	TotalAmount     int       `gorm:"column:total_amount"`
@@ -118,6 +119,7 @@ func (r *reportRepository) TransactionsBetween(startDate, endDate time.Time) ([]
 		Select(`
 			transactions.id,
 			transactions.transaction_code,
+			transactions.customer_name,
 			transactions.payment_method,
 			transactions.payment_status,
 			transactions.total_amount,
