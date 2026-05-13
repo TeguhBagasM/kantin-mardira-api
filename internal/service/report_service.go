@@ -182,6 +182,7 @@ func (s *reportService) TransactionsBetween(startDate, endDate string) ([]dto.Re
 		response := dto.ReportTransactionRow{
 			ID:              row.ID,
 			TransactionCode: row.TransactionCode,
+			CustomerName:    row.CustomerName,
 			PaymentMethod:   row.PaymentMethod,
 			PaymentStatus:   row.PaymentStatus,
 			TotalAmount:     row.TotalAmount,

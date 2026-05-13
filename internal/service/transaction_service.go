@@ -40,6 +40,7 @@ func mapTransactionSummary(transaction *entity.Transaction) *dto.TransactionResp
 	response := &dto.TransactionResponse{
 		ID:              transaction.ID.String(),
 		TransactionCode: transaction.TransactionCode,
+		CustomerName:    transaction.CustomerName,
 		PaymentMethod:   transaction.PaymentMethod,
 		PaymentStatus:   transaction.PaymentStatus,
 		TotalAmount:     transaction.TotalAmount,
@@ -62,6 +63,7 @@ func mapTransactionDetail(transaction *entity.Transaction) *dto.TransactionDetai
 	detail := &dto.TransactionDetailResponse{
 		ID:              transaction.ID.String(),
 		TransactionCode: transaction.TransactionCode,
+		CustomerName:    transaction.CustomerName,
 		PaymentMethod:   transaction.PaymentMethod,
 		PaymentStatus:   transaction.PaymentStatus,
 		TotalAmount:     transaction.TotalAmount,
@@ -101,6 +103,26 @@ func parseUUIDFromContext(userID string) (uuid.UUID, error) {
 	return uuid.Parse(strings.TrimSpace(userID))
 }
 
+func normalizeOptionalString(value string) *string {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return nil
+	}
+
+	return &trimmed
+}
+
+func mapCreateTransactionRequestToEntity(transactionCode string, cashierID uuid.UUID, request dto.CreateTransactionRequest) *entity.Transaction {
+	return &entity.Transaction{
+		ID:             uuid.New(),
+		TransactionCode: transactionCode,
+		CustomerName:    normalizeOptionalString(request.CustomerName),
+		CashierID:       &cashierID,
+		PaymentMethod:   strings.ToLower(strings.TrimSpace(request.PaymentMethod)),
+		PaymentStatus:   "pending",
+	}
+}
+
 func (s *transactionService) Create(userID string, request dto.CreateTransactionRequest) (*dto.TransactionDetailResponse, error) {
 	if len(request.Items) == 0 {
 		return nil, ErrInvalidTransactionItem
@@ -128,13 +150,7 @@ func (s *transactionService) Create(userID string, request dto.CreateTransaction
 		}
 	}()
 
-	transaction := &entity.Transaction{
-		ID:             uuid.New(),
-		TransactionCode: transactionCode,
-		CashierID:      &cashierID,
-		PaymentMethod:  strings.ToLower(strings.TrimSpace(request.PaymentMethod)),
-		PaymentStatus:  "pending",
-	}
+	transaction := mapCreateTransactionRequestToEntity(transactionCode, cashierID, request)
 
 	var totalAmount int
 	items := make([]entity.TransactionItem, 0, len(request.Items))

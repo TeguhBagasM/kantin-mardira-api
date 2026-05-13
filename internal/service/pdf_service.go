@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"kantin-mardira-api/internal/utils"
@@ -46,13 +47,17 @@ func (s *pdfService) DailyReportPDF(date string) ([]byte, string, error) {
 		if tx.Cashier != nil {
 			cashierName = tx.Cashier.Name
 		}
-		rows = append(rows, []string{tx.TransactionCode, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
+		customerName := "-"
+		if tx.CustomerName != nil && strings.TrimSpace(*tx.CustomerName) != "" {
+			customerName = *tx.CustomerName
+		}
+		rows = append(rows, []string{tx.TransactionCode, customerName, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
 	}
 	generator.AddTitle("Transactions")
 	if len(rows) == 0 {
 		generator.AddSubtitle("No transactions found for this period.")
 	} else {
-		generator.AddSimpleTable([]string{"Code", "Cashier", "Time", "Total"}, rows, []float64{55, 45, 45, 35})
+		generator.AddSimpleTable([]string{"Code", "Customer", "Cashier", "Time", "Total"}, rows, []float64{40, 40, 40, 35, 35})
 	}
 	bytes, err := generator.OutputBytes()
 	if err != nil {
@@ -87,9 +92,13 @@ func (s *pdfService) WeeklyReportPDF(startDate, endDate string) ([]byte, string,
 			if tx.Cashier != nil {
 				cashierName = tx.Cashier.Name
 			}
-			rows = append(rows, []string{tx.TransactionCode, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
+			customerName := "-"
+			if tx.CustomerName != nil && strings.TrimSpace(*tx.CustomerName) != "" {
+				customerName = *tx.CustomerName
+			}
+			rows = append(rows, []string{tx.TransactionCode, customerName, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
 		}
-		generator.AddSimpleTable([]string{"Code", "Cashier", "Time", "Total"}, rows, []float64{55, 45, 45, 35})
+		generator.AddSimpleTable([]string{"Code", "Customer", "Cashier", "Time", "Total"}, rows, []float64{40, 40, 40, 35, 35})
 	}
 	bytes, err := generator.OutputBytes()
 	if err != nil {
@@ -120,10 +129,14 @@ func (s *pdfService) MonthlyReportPDF(month, year int) ([]byte, string, error) {
 			if tx.Cashier != nil {
 				cashierName = tx.Cashier.Name
 			}
-			rows = append(rows, []string{tx.TransactionCode, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
+			customerName := "-"
+			if tx.CustomerName != nil && strings.TrimSpace(*tx.CustomerName) != "" {
+				customerName = *tx.CustomerName
+			}
+			rows = append(rows, []string{tx.TransactionCode, customerName, cashierName, tx.TransactionTime, generator.AddCurrency(tx.TotalAmount)})
 		}
 		generator.AddTitle("Transactions")
-		generator.AddSimpleTable([]string{"Code", "Cashier", "Time", "Total"}, rows, []float64{55, 45, 45, 35})
+		generator.AddSimpleTable([]string{"Code", "Customer", "Cashier", "Time", "Total"}, rows, []float64{40, 40, 40, 35, 35})
 	}
 	topMenus, err := s.reportService.TopSelling(10)
 	if err == nil && len(topMenus) > 0 {
@@ -150,6 +163,11 @@ func (s *pdfService) InvoicePDF(userID, role, transactionID string) ([]byte, str
 	generator.AddTitle("Invoice")
 	generator.AddSubtitle("KANTIN MARDIRA")
 	generator.AddSubtitle(fmt.Sprintf("Invoice: %s", transaction.TransactionCode))
+	customerName := "-"
+	if transaction.CustomerName != nil && strings.TrimSpace(*transaction.CustomerName) != "" {
+		customerName = *transaction.CustomerName
+	}
+	generator.AddSubtitle(fmt.Sprintf("Customer: %s", customerName))
 	generator.AddSubtitle(fmt.Sprintf("Cashier: %s", transaction.Cashier.Name))
 	generator.AddSubtitle(fmt.Sprintf("Date: %s", transaction.TransactionTime))
 	generator.AddSubtitle(fmt.Sprintf("Payment Method: %s", transaction.PaymentMethod))
