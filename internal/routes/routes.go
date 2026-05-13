@@ -1,6 +1,10 @@
 package routes
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
@@ -11,6 +15,8 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, db *gorm.DB) {
+	router.Static("/uploads", "./uploads")
+
 	apiV1 := router.Group("/api/v1")
 
 	userRepo := repository.NewUserRepository(db)
@@ -25,7 +31,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	userHandler := handler.NewUserHandler(userService)
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
-	menuService := service.NewMenuService(menuRepo)
+	menuService := service.NewMenuService(menuRepo, resolvePublicBaseURL())
 	menuHandler := handler.NewMenuHandler(menuService)
 	transactionService := service.NewTransactionService(transactionRepo, db)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
@@ -42,4 +48,17 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB) {
 	RegisterTransactionRoutes(apiV1, transactionHandler, authMiddleware)
 	RegisterReportRoutes(apiV1, reportHandler, authMiddleware)
 	RegisterPDFRoutes(apiV1, pdfHandler, authMiddleware)
+}
+
+func resolvePublicBaseURL() string {
+	if value := strings.TrimSpace(os.Getenv("APP_PUBLIC_URL")); value != "" {
+		return strings.TrimRight(value, "/")
+	}
+
+	port := strings.TrimSpace(os.Getenv("APP_PORT"))
+	if port == "" {
+		port = "8080"
+	}
+
+	return fmt.Sprintf("http://localhost:%s", port)
 }

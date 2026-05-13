@@ -1,21 +1,19 @@
 package dto
 
 type CreateMenuRequest struct {
-	CategoryID  string  `json:"category_id" binding:"required"`
-	Name        string  `json:"name" binding:"required,min=2,max=100"`
-	Price       int     `json:"price" binding:"required,gte=0"`
-	Stock       int     `json:"stock" binding:"gte=0"`
-	ImageURL    *string `json:"image_url"`
-	IsAvailable bool    `json:"is_available"`
+	CategoryID  string `form:"category_id" binding:"required"`
+	Name        string `form:"name" binding:"required,min=2,max=100"`
+	Price       int    `form:"price" binding:"required,gte=0"`
+	Stock       int    `form:"stock" binding:"gte=0"`
+	IsAvailable bool   `form:"is_available"`
 }
 
 type UpdateMenuRequest struct {
-	CategoryID  string  `json:"category_id" binding:"required"`
-	Name        string  `json:"name" binding:"required,min=2,max=100"`
-	Price       int     `json:"price" binding:"required,gte=0"`
-	Stock       int     `json:"stock" binding:"gte=0"`
-	ImageURL    *string `json:"image_url"`
-	IsAvailable bool    `json:"is_available"`
+	CategoryID  string `form:"category_id" binding:"required"`
+	Name        string `form:"name" binding:"required,min=2,max=100"`
+	Price       int    `form:"price" binding:"required,gte=0"`
+	Stock       int    `form:"stock" binding:"gte=0"`
+	IsAvailable bool   `form:"is_available"`
 }
 
 type CategoryResponseMini struct {
