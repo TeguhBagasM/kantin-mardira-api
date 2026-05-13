@@ -1,4 +1,6 @@
-@baseUrl = https://kantin-mardira-api-production.up.railway.app/api/v1
+@baseUrl = http://localhost:8080/api/v1
+# baseurl prod
+# @prodBaseUrl = https://kantin-mardira-api-production.up.railway.app/api/v1
 @adminEmail = admin@kantin.com
 @adminPassword = admin123
 @cashierEmail = cashier@kantin.com
@@ -6,12 +8,12 @@
 @managerEmail = manager@kantin.com
 @managerPassword = manager123
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2IwMTFjZTQtYWNlYy00MDU5LWFhMTYtNDk5MjI0MTE2YjUxIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzc4MzQ4ODk4LCJpYXQiOjE3NzgyNjI0OTgsImp0aSI6IjIwZjUwNTUxLWM4NjktNDU3Zi05NWNmLTliM2M3MzdlZjVlNiJ9.nJAscppnaOBT8PVRN96AEDoTj7vWlhne_VXLOukpQ3I
-@cashierToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTA3NmNhNmUtMmI2Ny00Yjg1LWIzYzMtMGMzNTg1MWQ1MzU3Iiwicm9sZSI6ImNhc2hpZXIiLCJleHAiOjE3Nzg3NDg2NjMsImlhdCI6MTc3ODY2MjI2MywianRpIjoiODg2Njc4YzgtNDQyMC00MzM1LTk3MGMtYTg0Y2E1NzU0MGQwIn0.uBvacXl8oDFuzdm6HulQl9MbZ1NrSL-CDRHZkXf-W4c
+@cashierToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZTA3NmNhNmUtMmI2Ny00Yjg1LWIzYzMtMGMzNTg1MWQ1MzU3Iiwicm9sZSI6ImNhc2hpZXIiLCJleHAiOjE3Nzg3NzUxMTQsImlhdCI6MTc3ODY4ODcxNCwianRpIjoiYTU1ZTFlNTUtZGZlMC00ZTA5LTlkNmItMWExMzA3NjJlNzRjIn0.b768JUeZrS0y5-S0w-09eaRmdj-0tPKiYh5eqXJpz4s
 @managerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzU2YThmNTgtMWU1MS00MjZlLTg2ODQtMzE1NDAzMWRmM2M0Iiwicm9sZSI6Im1hbmFnZXIiLCJleHAiOjE3NzgzNDg5NTIsImlhdCI6MTc3ODI2MjU1MiwianRpIjoiNWNkZmMyYTItNjAzNS00OWFhLWJlMDYtMTEzZTdmMTE1MmIzIn0.SVZzAKaEHwrxS8V9Hxb-65RkeQNUOKIA9YjjGHMINRg
 @userId = b9b0498a-bde4-4a13-8d3a-243ae4677599
 @categoryId = 867beafe-e6ce-437e-82d7-5604eb811861
 
-@menuId = 37c1212e-a413-45d8-b465-119e9bad50f4
+@menuId = a109503e-1c41-471f-b793-545fcb4d5e08
 @transactionId = 9753d120-0109-4132-a512-3ad16a0b5147
 
 ### Login as Admin
@@ -249,10 +251,6 @@ Content-Type: application/json
   "payment_method": "cash",
   "paid_amount": 50000,
   "items": [
-    {
-      "menu_id": "{{menuId}}",
-      "quantity": 2
-    }
     {
       "menu_id": "{{menuId}}",
       "quantity": 2

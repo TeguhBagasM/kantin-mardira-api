@@ -65,6 +65,7 @@ func ConnectDatabase() *gorm.DB {
 		CREATE TABLE IF NOT EXISTS transactions (
 			id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 			transaction_code VARCHAR(50) UNIQUE NOT NULL,
+			customer_name VARCHAR(100),
 			cashier_id UUID REFERENCES users(id),
 			payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('cash', 'qris')),
 			payment_status VARCHAR(20) NOT NULL CHECK (payment_status IN ('pending', 'paid', 'cancelled')),
@@ -74,6 +75,13 @@ func ConnectDatabase() *gorm.DB {
 			transaction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)
+	`).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	if err := db.Exec(`
+		ALTER TABLE IF EXISTS transactions
+		ADD COLUMN IF NOT EXISTS customer_name VARCHAR(100)
 	`).Error; err != nil {
 		log.Fatal(err)
 	}
