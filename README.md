@@ -78,6 +78,9 @@ Features:
 - Menu stock
 - Menu availability
 - Nested category response
+- Multipart image upload
+- Automatic image_url generation
+- Static upload serving at /uploads
 
 ---
 
@@ -216,6 +219,8 @@ DB_USER=
 DB_PASSWORD=
 DB_NAME=
 DB_SSLMODE=require
+
+APP_PUBLIC_URL=http://localhost:8080
 
 JWT_SECRET=
 ```

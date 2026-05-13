@@ -166,16 +166,34 @@ Content-Type: application/json
 ### Create Menu - Admin Only
 POST {{baseUrl}}/menus
 Authorization: Bearer {{token}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=Boundary
 
-{
-  "category_id": "{{categoryId}}",
-  "name": "Nasi Ayam Geprek",
-  "price": 11000,
-  "stock": 30,
-  "image_url": "https://example.com/nasi-ayam-geprek.jpg",
-  "is_available": true
-}
+--Boundary
+Content-Disposition: form-data; name="category_id"
+
+{{categoryId}}
+--Boundary
+Content-Disposition: form-data; name="name"
+
+Nasi Ayam Geprek
+--Boundary
+Content-Disposition: form-data; name="price"
+
+11000
+--Boundary
+Content-Disposition: form-data; name="stock"
+
+30
+--Boundary
+Content-Disposition: form-data; name="is_available"
+
+true
+--Boundary
+Content-Disposition: form-data; name="image"; filename="nasi-ayam-geprek.jpg"
+Content-Type: image/jpeg
+
+< ./sample-images/nasi-ayam-geprek.jpg
+--Boundary--
 
 > {%
 client.global.set("menuId", response.body.data.id);
@@ -192,16 +210,34 @@ Authorization: Bearer {{token}}
 ### Update Menu - Admin Only
 PUT {{baseUrl}}/menus/{{menuId}}
 Authorization: Bearer {{token}}
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=Boundary
 
-{
-  "category_id": "{{categoryId}}",
-  "name": "Indomie Rebus",
-  "price": 10000,
-  "stock": 100,
-  "image_url": "https://example.com/indomie-rebus.jpg",
-  "is_available": true
-}
+--Boundary
+Content-Disposition: form-data; name="category_id"
+
+{{categoryId}}
+--Boundary
+Content-Disposition: form-data; name="name"
+
+Indomie Rebus
+--Boundary
+Content-Disposition: form-data; name="price"
+
+10000
+--Boundary
+Content-Disposition: form-data; name="stock"
+
+100
+--Boundary
+Content-Disposition: form-data; name="is_available"
+
+true
+--Boundary
+Content-Disposition: form-data; name="image"; filename="indomie-rebus.jpg"
+Content-Type: image/jpeg
+
+< ./sample-images/indomie-rebus.jpg
+--Boundary--
 
 ### Create Transaction - Cashier
 POST {{baseUrl}}/transactions
