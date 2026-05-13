@@ -65,6 +65,7 @@ type TopSellingMenuResponse struct {
 type ReportTransactionRow struct {
 	ID              string                      `json:"id"`
 	TransactionCode string                      `json:"transaction_code"`
+	CustomerName    *string                     `json:"customer_name,omitempty"`
 	Cashier         *CashierResponseMini        `json:"cashier,omitempty"`
 	PaymentMethod   string                      `json:"payment_method"`
 	PaymentStatus   string                      `json:"payment_status"`
@@ -92,6 +93,7 @@ type ReportPDFData struct {
 
 type InvoicePDFData struct {
 	TransactionCode string
+	CustomerName    *string
 	CashierName     string
 	TransactionDate string
 	PaymentMethod   string

@@ -9,6 +9,7 @@ import (
 type Transaction struct {
 	ID               uuid.UUID           `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	TransactionCode   string              `gorm:"type:varchar(50);uniqueIndex;not null" json:"transaction_code"`
+	CustomerName      *string             `gorm:"type:varchar(100)" json:"customer_name,omitempty"`
 	CashierID         *uuid.UUID          `gorm:"type:uuid" json:"cashier_id"`
 	Cashier           *User               `gorm:"foreignKey:CashierID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"cashier,omitempty"`
 	PaymentMethod     string              `gorm:"type:varchar(20);not null" json:"payment_method"`

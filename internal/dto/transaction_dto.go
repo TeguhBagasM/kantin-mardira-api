@@ -6,6 +6,7 @@ type TransactionItemRequest struct {
 }
 
 type CreateTransactionRequest struct {
+	CustomerName  string                   `json:"customer_name" binding:"omitempty,max=100"`
 	PaymentMethod string                   `json:"payment_method" binding:"required,oneof=cash qris"`
 	PaidAmount    int                      `json:"paid_amount"`
 	Items         []TransactionItemRequest `json:"items" binding:"required,min=1"`
@@ -31,6 +32,7 @@ type CashierResponseMini struct {
 type TransactionResponse struct {
 	ID              string               `json:"id"`
 	TransactionCode string               `json:"transaction_code"`
+	CustomerName    *string              `json:"customer_name,omitempty"`
 	Cashier         *CashierResponseMini `json:"cashier,omitempty"`
 	PaymentMethod   string               `json:"payment_method"`
 	PaymentStatus   string               `json:"payment_status"`
@@ -43,6 +45,7 @@ type TransactionResponse struct {
 type TransactionDetailResponse struct {
 	ID              string                    `json:"id"`
 	TransactionCode string                    `json:"transaction_code"`
+	CustomerName    *string                   `json:"customer_name,omitempty"`
 	Cashier         *CashierResponseMini      `json:"cashier,omitempty"`
 	PaymentMethod   string                    `json:"payment_method"`
 	PaymentStatus   string                    `json:"payment_status"`
